@@ -33,7 +33,9 @@ function Plist() {
             typeOfHazard: user.main_Characteristicts?.typeOfHazard || 'Unknown',
             educationalStatus: user.other_Characteristicts?.educationalStatus || 'Unknown',
             departmentName: user.department?.name || 'Unknown',
-            // Ekstra alanlar gerekiyorsa buraya ekleyebilirsiniz
+            tasksName : user.department?.tasks?.name || 'Unknown',
+            costcentersName : user.department?.costCenters?.name || 'Unknown',
+            budget : user.department?.costCenters?.budget || 'Unknown',
         }));
     };
 
@@ -77,9 +79,9 @@ function Plist() {
         { headerName: "Ana-Tehlike Türü", field: "typeOfHazard" },
         { headerName: "Diğer-Eğitim Durumu", field: "educationalStatus" },
         { headerName: "Departman", field: "departmentName" },
-         { headerName: "Görev", field: "name" },
-         { headerName: "Masraf Merkezi", field: "name" },
-         { headerName: "Masraf Merkezi", field: "budget" },
+        { headerName: "Görev", field: "tasksName" },
+        { headerName: "Masraf Merkezi İsmi", field: "costcentersName" },
+        { headerName: "Masraf Merkezi Bütçesi", field: "budget" },
     ];
     // console.log("Columns:", columns); 
 
@@ -101,9 +103,9 @@ function Plist() {
                 <td>{EventUsers.typeOfHazard}</td>
                 <td>{EventUsers.educationalStatus}</td>
                 <td>{EventUsers.departmentName}</td>
-                { <td>{EventUsers.name}</td>  }
-                { <td>{EventUsers.name}</td>  }
-                { <td>{EventUsers.budget}</td>  }
+                { <td>{EventUsers.tasksName}</td>  }
+                { <td>{EventUsers.costcentersName}</td> }
+                { <td>{EventUsers.budget}</td> }
 
             </tr>
 
