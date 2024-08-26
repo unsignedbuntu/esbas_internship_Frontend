@@ -9,7 +9,7 @@ function EventEnded() {
 
   const handlePersonelList = () => {
    //navigate(`/participant-list/${EventID}`);
-   navigate('/plist')
+   navigate(`/plist/${EventID}`);
   };
 
   const handleLoGoClick =()=>{

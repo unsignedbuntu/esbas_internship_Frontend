@@ -12,7 +12,6 @@
 .header {
   display: flex;
   justify-content: flex-start;
-  /* Sol tarafa hizalar */
   align-items: center;
   margin-bottom: 20px;
 }
@@ -22,34 +21,30 @@
   height: auto;
 }
 
-
 h2 {
   margin-top: 45px;
   text-align: center;
   margin-bottom: 20px;
 }
 
-.department-list {
+.other-list {
   list-style-type: none;
   padding: 0;
   margin-bottom: 20px;
   width: 100%;
 }
 
-.department-item {
+.other-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
   border: 1px solid #ccc;
-  /* Kenarlık eklendi */
   border-radius: 4px;
-  /* Köşeleri yuvarlatmak için */
   margin-bottom: 10px;
-  /* Her bir öğe arasına boşluk eklemek için */
 }
 
-.location-item span {
+.other-item span {
   flex: 1;
 }
 
@@ -59,7 +54,6 @@ h2 {
   cursor: pointer;
   color: red;
   font-size: 1.2em;
-  width: auto;
 }
 
 .input-container {
@@ -69,16 +63,13 @@ h2 {
 
 .input-field {
   flex: 4;
-  /* Daha büyük yapmak için flex değeri artırıldı */
   padding: 12px;
-  /* Biraz daha fazla padding eklendi */
   border-radius: 4px;
   border: 1px solid #ccc;
 }
 
 .add-button {
   flex: 1;
-  /* Daha küçük yapmak için flex değeri azaltıldı */
   margin-left: 10px;
   padding: 10px;
   border-radius: 4px;

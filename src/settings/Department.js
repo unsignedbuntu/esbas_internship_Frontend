@@ -1,25 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Department.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Department() {
   const navigate = useNavigate();
-  const [departments, setDepartments] = useState([
-    "İnsan Kaynakları",
-    "Bilgi İşlem",
-  ]);
+  const [departments, setDepartments] = useState([]);
   const [newDepartment, setNewDepartment] = useState("");
 
-  const addDepartment = () => {
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get('https://localhost:7282/DepartmentDTO');
+        setDepartments(response.data);
+      } catch (error) {
+        console.error("Error fetching departments", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
+
+  const addDepartment = async () => {
     if (newDepartment.trim()) {
-      setDepartments([...departments, newDepartment.trim()]);
-      setNewDepartment("");
+      try {
+        const response = await axios.post('https://localhost:7282/DepartmentDTO', {
+          name: newDepartment.trim()
+        });
+        setDepartments([...departments, response.data]);
+        setNewDepartment("");
+      } catch (error) {
+        console.error("Error adding department", error);
+      }
     }
   };
 
-  const deleteDepartment = (index) => {
-    setDepartments(departments.filter((_, i) => i !== index));
+  const deleteDepartment = async (departmentID) => {
+    try {
+      await axios.delete(`https://localhost:7282/DepartmentDTO/${departmentID}`);
+      setDepartments(departments.filter((department) => department.departmentID !== departmentID));
+    } catch (error) {
+      console.error("Error deleting department", error);
+    }
   };
+
   const handleLogoClick = () => {
     navigate("/");
   };
@@ -33,23 +57,21 @@ function Department() {
           alt="ESBAŞ Logo"
           className="logo"
         />
-      </header>{" "}
-      <h2> KATILIMCI DEPARTMAN </h2>{" "}
+      </header>
+      <h2>KATILIMCI DEPARTMAN</h2>
       <ul className="department-list">
-        {" "}
-        {departments.map((department, index) => (
-          <li key={index} className="department-item">
-            {" "}
-            {index + 1} {department}{" "}
+        {departments.map((department) => (
+          <li key={department.departmentID} className="department-item">
+            {department.name}
             <button
-              onClick={() => deleteDepartment(index)}
+              onClick={() => deleteDepartment(department.departmentID)}
               className="delete-button"
             >
               🗑️
-            </button>{" "}
+            </button>
           </li>
-        ))}{" "}
-      </ul>{" "}
+        ))}
+      </ul>
       <div className="input-container">
         <input
           type="text"
@@ -60,9 +82,9 @@ function Department() {
         />
         <button onClick={addDepartment} className="add-button">
           +
-        </button>{" "}
-      </div>{" "}
-      <button className="save-button"> KAYDET </button>{" "}
+        </button>
+      </div>
+      <button className="save-button">KAYDET</button>
     </div>
   );
 }

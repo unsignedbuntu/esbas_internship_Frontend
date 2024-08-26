@@ -50,6 +50,8 @@
   
   .event-item span {
     flex: 1;
+    font-size: 1.1em;  /* Yazı boyutu artırıldı */
+    color: #333;  /* Yazı rengi daha koyu */
   }
   
   .event-name {

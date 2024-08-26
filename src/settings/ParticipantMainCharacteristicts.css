@@ -22,21 +22,19 @@
   height: auto;
 }
 
-
 h2 {
-  margin-top: 45px;
   text-align: center;
   margin-bottom: 20px;
 }
 
-.department-list {
+.main-list {
   list-style-type: none;
   padding: 0;
   margin-bottom: 20px;
   width: 100%;
 }
 
-.department-item {
+.main-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -49,8 +47,10 @@ h2 {
   /* Her bir öğe arasına boşluk eklemek için */
 }
 
-.location-item span {
+.main-item span {
   flex: 1;
+  font-size: 1.1em;  /* Yazı boyutu artırıldı */
+  color: #333;  /* Yazı rengi daha koyu */
 }
 
 .delete-button {

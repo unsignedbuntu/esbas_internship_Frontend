@@ -1,38 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./AddNewParticipant.css";
 import axios from "axios";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 const AddNewParticipant = () => {
-  const navigate = useNavigate(); // useNavigate kancasını kullanarak navigate fonksiyonunu tanımlıyoruz
-  const { eventID } = useParams(); // useParams kancasını kullanarak URL'den eventID parametresini alıyoruz
-  const [form, setForm] = useState({
-    FullName: "",
-    CardID: "",
-    Deparment: "",
-    IsOfficeEmployee: "",
-    Gender: "",
-  });
+  const [RegID, setRegID] = useState("");
+  const [cardID, setCardID] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [mailAddress, setMailAddress] = useState("");
+  const [hireDate, setHireDate] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  
+  const [userGender, setUserGender] = useState([]);
+  const [mainCharacteristicts, setMainCharacteristicts] = useState([]);
+  const [otherCharacteristicts, setOtherCharacteristicts] = useState([]);
+  const [department, setDepartment] = useState([]);
 
-  // Form alanlarının değişimini yöneten fonksiyon
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: value,
-    });
-  };
+  const [selectedUserGender, setSelectedUserGender] = useState("");
+  const [selectedMainCharacteristicts, setSelectedMainCharacteristicts] = useState("");
+  const [selectedOtherCharacteristicts, setSelectedOtherCharacteristicts] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  
+  const navigate = useNavigate();
+  const { eventID } = useParams();
 
-  // Form gönderildiğinde çalışacak fonksiyon
+  useEffect(() => {
+    const fetchNormalizationTables = async () => {
+      try {
+        const userGenderResponse = await axios.get('https://localhost:7282/User_GenderDTO');
+        const mainCharacteristictsResponse = await axios.get('https://localhost:7282/MainCharacteristictsDTO');
+        const otherCharacteristictsResponse = await axios.get('https://localhost:7282/OtherCharacteristictsDTO');
+        const departmentResponse = await axios.get('https://localhost:7282/DepartmentDTO');
+
+        setUserGender(userGenderResponse.data);
+        setMainCharacteristicts(mainCharacteristictsResponse.data);
+        setOtherCharacteristicts(otherCharacteristictsResponse.data);
+        setDepartment(departmentResponse.data);
+      } catch (error) {
+        console.error("Error fetching normalization tables", error);
+      }
+    };
+
+    fetchNormalizationTables();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // Yeni kullanıcı ekle
-      const userResponse = await axios.post('https://localhost:7282/UsersDTO', form);
+    const newUser = {
+      userRegistrationID: RegID,
+      cardID: cardID,
+      fullName: fullName,
+      dateOfBirth: dateOfBirth,
+      mailAddress: mailAddress,
+      hireDate: hireDate,
+      phoneNumber: phoneNumber,
+      departmentID: selectedDepartment,
+      g_ID: selectedUserGender,
+      mC_ID: selectedMainCharacteristicts,
+      oC_ID: selectedOtherCharacteristicts
+    };
 
-      // Yeni kullanıcıyı etkinlikle ilişkilendir
-      const CardID = userResponse.data.id; // Yeni kullanıcının ID'sini al
-      await axios.post('https://localhost:7282/Events_UsersDTO', { eventID: parseInt(eventID), CardID });
+    try {
+      const userResponse = await axios.post('https://localhost:7282/UsersDTO', newUser);
+      const cardID = userResponse.data.cardID;
+      await axios.post('https://localhost:7282/Events_UsersDTO', { eventID: parseInt(eventID), cardID });
 
       navigate(`/plist/${eventID}`);
       console.log("Katılımcı başarıyla eklendi");
@@ -41,14 +75,17 @@ const AddNewParticipant = () => {
     }
   };
 
-  // Logoya tıklanınca ana sayfaya yönlendiren fonksiyon
-  const handleLoGoClick = () => {
-    navigate("/");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEvent({
+      ...event,
+      [name]: value
+    });
   };
 
-  // Misafir katılımcı ekle sayfasına yönlendiren fonksiyon
-  const handleAddGuestClick = () => {
-    navigate("/add-guest");
+
+  const handleIconClick = (path) => {
+    navigate(path);
   };
 
   return (
@@ -56,37 +93,173 @@ const AddNewParticipant = () => {
       <header className="header">
         <img
           src={`${process.env.PUBLIC_URL}/logo-esbas.png`}
-          onClick={handleLoGoClick}
+          onClick={() => navigate("/")}
           className="logo"
           alt="ESBAŞ Logo"
         />
       </header>
       <div className="add-participant">
-        <div className="add-participant-header">
-          <h2>Yeni Katılımcı Ekle</h2>
-          <button className="misafir-butonu" onClick={handleAddGuestClick}>Misafir Katılımcı</button>
-        </div>
+        <h2>Yeni Katılımcı Ekle</h2>
         <form onSubmit={handleSubmit}>
+          <label>
+            Sicil Numarası:
+            <input
+              type="text"
+              name="userRegistrationID"
+              value={RegID}
+              onChange={(e) => setRegID(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Kart ID:
+            <input
+              type="text"
+              name="cardID"
+              value={cardID}
+              onChange={(e) => setCardID(e.target.value)}
+              required
+            />
+          </label>
           <label>
             Ad Soyad:
             <input
               type="text"
-              name="FullName"
-              value={form["FullName"]}
+              name="fullName"
+              value={fullName}
               onChange={handleChange}
               required
             />
           </label>
           <label>
-            Card ID:
+            Doğum Tarihi:
             <input
-              type="text"
-              name="CardID"
-              value={form["CardID"]}
-              onChange={handleChange}
+              type="date"
+              name="dateOfBirth"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
               required
             />
           </label>
+          <label>
+            E-posta Adresi:
+            <input
+              type="email"
+              name="mailAddress"
+              value={mailAddress}
+              onChange={(e) => setMailAddress(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            İşe Alım Tarihi:
+            <input
+              type="date"
+              name="hireDate"
+              value={hireDate}
+              onChange={(e) => setHireDate(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Telefon Numarası:
+            <input
+              type="tel"
+              name="phoneNumber"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+            />
+          </label>
+
+          <div className="form-group">
+            <label>
+              Cinsiyet
+              <FontAwesomeIcon
+                icon={faCog}
+                onClick={() => handleIconClick('/add-new-participant/participant-gender')}
+                className="icon"
+              />
+            </label>
+            <select
+              value={selectedUserGender}
+              onChange={(e) => setSelectedUserGender(e.target.value)}
+            >
+              <option value="">Seçiniz</option>
+              {userGender.map((gender) => (
+                <option key={gender.g_ID} value={gender.g_ID}>
+                  {gender.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Ana Özellikler
+              <FontAwesomeIcon
+                icon={faCog}
+                onClick={() => handleIconClick('/add-new-participant/participant-maincharacteristicts')}
+                className="icon"
+              />
+            </label>
+            <select
+              value={selectedMainCharacteristicts}
+              onChange={(e) => setSelectedMainCharacteristicts(e.target.value)}
+            >
+              <option value="">Seçiniz</option>
+              {mainCharacteristicts.map((characteristicts) => (
+                <option key={characteristicts.mC_ID} value={characteristicts.mC_ID}>
+                  {characteristicts.characteristictsName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Diğer Özellikler
+              <FontAwesomeIcon
+                icon={faCog}
+                onClick={() => handleIconClick('/add-new-participant/participant-othercharacteristicts')}
+                className="icon"
+              />
+            </label>
+            <select
+              value={selectedOtherCharacteristicts}
+              onChange={(e) => setSelectedOtherCharacteristicts(e.target.value)}
+            >
+              <option value="">Seçiniz</option>
+              {otherCharacteristicts.map((characteristic) => (
+                <option key={characteristic.oC_ID} value={characteristic.oC_ID}>
+                  {characteristic.educationalStatus}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Departman
+              <FontAwesomeIcon
+                icon={faCog}
+                onClick={() => handleIconClick('/add-new-participant/department')}
+                className="icon"
+              />
+            </label>
+            <select
+              value={selectedDepartment}
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+            >
+              <option value="">Seçiniz</option>
+              {department.map((dept) => (
+                <option key={dept.departmentID} value={dept.departmentID}>
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <button type="submit">Kaydet</button>
         </form>
       </div>
@@ -95,62 +268,3 @@ const AddNewParticipant = () => {
 };
 
 export default AddNewParticipant;
-
-
-
-/*
-<label>
-            Departman:
-            <FontAwesomeIcon
-            icon = {faCog}
-            onClick={() => handleIconClick('/add-new-participant/participant-department')}
-            className="icon"
-            />
-            <select
-              name="Department"
-              value={form.Department}
-              onChange={handleChange}
-              required
-            >
-              <option value=""> Seçiniz </option>{" "}
-              <option value="İnsan Kaynakları"> İnsan Kaynakları </option>{" "}
-              <option value="Bilgi İşlem"> Bilgi İşlem </option>{" "}
-            </select>{" "}
-          </label>{" "}
-          <label>
-            Çalışma Alanı:
-            <FontAwesomeIcon
-            icon = {faCog}
-            onClick={() => handleIconClick('/add-new-participant/participant-location')}
-            className="icon"
-            />
-            <select
-              name="IsOfficeEmployee"
-              value={form.IsOfficeEmployee}
-              onChange={handleChange}
-              required
-            >
-              <option value=""> Seçiniz </option>
-              <option value="Ofis"> Ofis </option>
-              <option value="Saha"> Saha </option>
-            </select>{" "}
-          </label>{" "}
-          <label>
-            Cinsiyet:
-            <FontAwesomeIcon
-            icon = {faCog}
-            onClick={() => handleIconClick('/add-new-participant/participant-gender')}
-            className="icon"
-            />
-            <select
-              name="Gender"
-              value={form.Gender}
-              onChange={handleChange}
-              required
-            >
-              <option value=""> Seçiniz </option>
-              <option value="Kadın"> Kadın </option>
-              <option value="Erkek"> Erkek </option>
-            </select>{" "}
-          </label>{" "}
-*/

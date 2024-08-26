@@ -8,7 +8,8 @@ import EventUpdate from './components/EventUpdate';
 import AddNewEvent from './components/AddNewEvent';
 import EventType from './settings/EventType';
 import EventLocation from './settings/EventLocation';
-import ParticipantLocation from './settings/ParticipantLocation';
+import ParticipantMainCharacteristicts from './settings/ParticipantMainCharacteristicts';
+import ParticipantOtherCharacteristicts from './settings/ParticipantOtherCharacteristicts';
 import ParticipantGender from './settings/ParticipantGender';
 import AddGuest from './components/AddGuest';
 import Department from './settings/Department';
@@ -28,7 +29,8 @@ function App() {
                 <Route path="/add-new-event/event-type" element= {<EventType />} />
                 <Route path="/add-new-event/event-location" element= {<EventLocation />} />
                 <Route path="/add-new-participant/department" element= { < Department />} />
-                <Route path="/add-new-participant/participant-location" element= {<ParticipantLocation/>} />
+                <Route path="/add-new-participant/participant-maincharacteristicts" element= {<ParticipantMainCharacteristicts/>} />
+                <Route path="/add-new-participant/participant-othercharacteristicts" element= {<ParticipantOtherCharacteristicts/>} />
                 <Route path="/add-new-participant/participant-gender" element= {<ParticipantGender/>} />
                 <Route path="/plist/:EventID" element={<Plist />} />
 

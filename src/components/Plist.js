@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { CheckboxSelectionComponent } from 'ag-grid-community';
+import 'ag-grid-enterprise';
 
 function Plist() {
     const [datas, setDatas] = useState([]);
@@ -36,6 +37,7 @@ function Plist() {
             tasksName : user.department?.tasks?.name || 'Unknown',
             costcentersName : user.department?.costCenters?.name || 'Unknown',
             budget : user.department?.costCenters?.budget || 'Unknown',
+ 
         }));
     };
 
@@ -103,9 +105,9 @@ function Plist() {
                 <td>{EventUsers.typeOfHazard}</td>
                 <td>{EventUsers.educationalStatus}</td>
                 <td>{EventUsers.departmentName}</td>
-                { <td>{EventUsers.tasksName}</td>  }
-                { <td>{EventUsers.costcentersName}</td> }
-                { <td>{EventUsers.budget}</td> }
+                 <td>{EventUsers.tasksName}</td>  
+                 <td>{EventUsers.costcentersName}</td> 
+                 <td>{EventUsers.budget}</td> 
 
             </tr>
 
@@ -157,6 +159,9 @@ function Plist() {
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     rowSelection='multiple'
+                    pagination={true}
+                    paginationPageSize={10}
+                    paginationPageSizeSelector={[10,20,30]}
                 />
             </div>
         </div>
